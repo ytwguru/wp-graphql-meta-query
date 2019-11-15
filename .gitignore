@@ -7,10 +7,6 @@ node_modules/
 .idea
 coverage/
 build/
-vendor/*
-!vendor/composer
-!vendor/autoload.php
-c3.php
-!/tests
+vendor
 /tests/*.suite.yml
 /tests/_output
