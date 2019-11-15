@@ -18,7 +18,6 @@
  */
 
 namespace WPGraphQL;
-use GraphQL\Type\Definition\InputObjectType;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,14 +28,17 @@ use WPGraphQL\Registry\TypeRegistry;
 
 class MetaQuery {
 
-	/**
-	 * MetaQuery constructor.
-	 *
-	 * This hooks the plugin into the WPGraphQL Plugin
-	 *
-	 * @since 0.0.1
-	 */
-	public function __construct() {
+    private $type_registry;
+
+    /**
+     * MetaQuery constructor
+     *
+     * This hooks the plugin into the WPGraphQL Plugin.
+     * @param $type_registry
+     */
+	public function __construct($type_registry) {
+
+        $this->type_registry = $type_registry;
 
 		/**
 		 * Setup plugin constants
@@ -136,27 +138,24 @@ class MetaQuery {
 	 * @since 0.0.1
 	 * @throws \Exception
 	 */
-	public function add_input_fields( $fields, $type_name, $config ) {
-		if ( isset( $config['queryClass'] ) && 'WP_Query' === $config['queryClass'] ) {
-            $type_registry = new InputObjectType($config);
-			$this->register_types( $type_name, $type_registry );
-			$fields['metaQuery'] = [
-				'type' => $type_name . 'MetaQuery',
-			];
+	public function add_input_fields( $fields, $type_name, $config = null ) {
+        if(!empty($this->type_registry) && isset($fields["dateQuery"])) {
+            $fields['metaQuery'] = [
+                'type' => $type_name . 'MetaQuery',
+            ];
+			$this->register_types( $type_name );
 		}
 
 		return $fields;
 	}
 
-	/**
-	 * @param              $type_name
-	 * @param TypeRegistry $type_registry
-	 *
-	 * @throws \Exception
-	 */
-	public function register_types( $type_name, TypeRegistry $type_registry ) {
 
-		$type_registry->register_enum_type( $type_name . 'MetaTypeEnum', [
+    /**
+     * @param $type_name
+     */
+	public function register_types( $type_name ) {
+
+        $this->type_registry->register_enum_type( $type_name . 'MetaTypeEnum', [
 			'values' => [
 				'NUMERIC' => [
 					'name'  => 'NUMERIC',
@@ -197,7 +196,7 @@ class MetaQuery {
 			]
 		] );
 
-		$type_registry->register_enum_type( $type_name . 'MetaCompareEnum', [
+        $this->type_registry->register_enum_type( $type_name . 'MetaCompareEnum', [
 			'values' => [
 				'EQUAL_TO'                 => [
 					'name'  => 'EQUAL_TO',
@@ -258,7 +257,7 @@ class MetaQuery {
 			]
 		] );
 
-		$type_registry->register_input_type( $type_name . 'MetaArray', [
+        $this->type_registry->register_input_type( $type_name . 'MetaArray', [
 			'fields' => [
 				'key'     => [
 					'type'        => 'String',
@@ -279,7 +278,7 @@ class MetaQuery {
 			]
 		] );
 
-		$type_registry->register_input_type( $type_name . 'MetaQuery', [
+        $this->type_registry->register_input_type( $type_name . 'MetaQuery', [
 			'fields' => [
 				'relation'  => [
 					'type' => 'RelationEnum',
@@ -344,13 +343,6 @@ class MetaQuery {
 
 }
 
-/**
- * Instantiate the MetaQuery class on graphql_init
- *
- * @return MetaQuery
- */
-function graphql_init_meta_query() {
-	return new MetaQuery();
-}
-
-add_action( 'graphql_init', '\WPGraphql\graphql_init_meta_query' );
+add_action( 'graphql_register_types', function( TypeRegistry $type_registry ) {
+    return new MetaQuery($type_registry);
+} );
