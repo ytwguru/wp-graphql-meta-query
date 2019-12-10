@@ -263,10 +263,14 @@ class MetaQuery {
 					'type'        => 'String',
 					'description' => __( 'Custom field key', 'wp-graphql' ),
 				],
-				'value'   => [
+                'value'   => [
+                    'type'        => 'String',
+                    'description' => __( 'Custom field value', 'wp-graphql' ),
+                ],
+                'valueArray'   => [
                     'type'        => [ 'list_of' => 'String' ],
-					'description' => __( 'Custom field value', 'wp-graphql' ),
-				],
+                    'description' => __( 'Custom field value', 'wp-graphql' ),
+                ],
 				'compare' => [
 					'type'        => $type_name . 'MetaCompareEnum',
 					'description' => __( 'Custom field value', 'wp-graphql' ),
@@ -320,7 +324,14 @@ class MetaQuery {
 					unset( $meta_query['relation'] );
 				}
 				foreach ( $meta_query['metaArray'] as $meta_query_key => $value ) {
-					$meta_query[] = [
+
+                    if(!empty($value["valueArray"])) {
+                        if(empty($value["value"]))
+                            $value["value"] = $value["valueArray"];
+                        unset($value["valueArray"]);
+                    }
+
+                    $meta_query[] = [
 						$meta_query_key => $value,
 					];
 				}
