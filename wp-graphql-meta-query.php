@@ -323,18 +323,18 @@ class MetaQuery {
 				if ( 2 < count( $meta_query['metaArray'] ) ) {
 					unset( $meta_query['relation'] );
 				}
-				foreach ( $meta_query['metaArray'] as $meta_query_key => $value ) {
+                foreach ( $meta_query['metaArray'] as $meta_query_key => $value ) {
 
-                    if(!empty($value["valueArray"])) {
+                    if(!empty($value["valueArray"]) && count($value["valueArray"]) > 0) {
                         if(empty($value["value"]))
                             $value["value"] = $value["valueArray"];
                         unset($value["valueArray"]);
-                    }
 
-                    $meta_query[] = [
-						$meta_query_key => $value,
-					];
-				}
+                        $meta_query[] = [
+                            $meta_query_key => $value,
+                        ];
+                    }
+                }
 			}
 			unset( $meta_query['metaArray'] );
 
