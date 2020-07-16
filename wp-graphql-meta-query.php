@@ -333,6 +333,10 @@ class MetaQuery {
                         $meta_query[] = [
                             $meta_query_key => $value,
                         ];
+                    } else if (empty($value["valueArray"])){
+                        $meta_query[] = [
+                            $meta_query_key => $value,
+                        ];
                     }
                 }
 			}
