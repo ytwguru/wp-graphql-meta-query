@@ -308,53 +308,56 @@ class MetaQuery {
 	 * @return mixed
 	 * @since 0.0.1
 	 */
-	public function map_input_fields( $query_args, $input_args ) {
+    public function map_input_fields( $query_args, $input_args ) {
 
-		/**
-		 * check to see if the metaQuery came through with the input $args, and
-		 * map it properly to the $queryArgs that are returned and passed to the WP_Query
-		 *
-		 * @since 0.0.1
-		 */
-		$meta_query = null;
-		if ( ! empty( $input_args['metaQuery'] ) ) {
-			$meta_query = $input_args['metaQuery'];
-			if ( ! empty( $meta_query['metaArray'] ) && is_array( $meta_query['metaArray'] ) ) {
-				if ( 2 < count( $meta_query['metaArray'] ) ) {
-					unset( $meta_query['relation'] );
-				}
+        /**
+         * check to see if the metaQuery came through with the input $args, and
+         * map it properly to the $queryArgs that are returned and passed to the WP_Query
+         *
+         * @since 0.0.1
+         */
+        $meta_query = null;
+        if ( ! empty( $input_args['metaQuery'] ) ) {
+            $meta_query = $input_args['metaQuery'];
+            if ( ! empty( $meta_query['metaArray'] ) && is_array( $meta_query['metaArray'] ) ) {
+                if ( 2 < count( $meta_query['metaArray'] ) ) {
+                    unset( $meta_query['relation'] );
+                }
                 foreach ( $meta_query['metaArray'] as $meta_query_key => $value ) {
 
                     if(!empty($value["valueArray"]) && count($value["valueArray"]) > 0) {
                         if(empty($value["value"]))
                             $value["value"] = $value["valueArray"];
-                        unset($value["valueArray"]);
+                        $meta_query[] = $value;
 
-                        $meta_query[] = [
-                            $meta_query_key => $value,
-                        ];
-                    } else if (empty($value["valueArray"])){
-                        $meta_query[] = [
-                            $meta_query_key => $value,
-                        ];
+                    } else if(!empty($value["value"])){
+                        $meta_query[] = $value;
                     }
+
+                    unset($value["valueArray"]);
                 }
-			}
-			unset( $meta_query['metaArray'] );
+            }
+            unset( $meta_query['metaArray'] );
 
-		}
-		if ( ! empty( $meta_query ) ) {
-			$query_args['meta_query'] = $meta_query;
-		}
+        }
+        if ( ! empty( $input_args['metaKey'] ) ) {
+            $query_args['meta_key'] = $input_args['metaKey'];
+            unset( $meta_query['metaKey'] );
+        }
+        if ( ! empty( $meta_query ) ) {
+            $query_args['meta_query'] = $meta_query;
+        }
 
-		/**
-		 * Retrun the $query_args
-		 *
-		 * @since 0.0.1
-		 */
-		return $query_args;
+        unset( $query_args['metaQuery'] );
 
-	}
+        /**
+         * Retrun the $query_args
+         *
+         * @since 0.0.1
+         */
+        return $query_args;
+
+    }
 
 }
 
