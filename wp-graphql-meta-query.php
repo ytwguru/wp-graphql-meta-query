@@ -340,8 +340,8 @@ class MetaQuery {
             unset( $meta_query['metaArray'] );
 
         }
-        if ( ! empty( $input_args['metaKey'] ) ) {
-            $query_args['meta_key'] = $input_args['metaKey'];
+        if ( ! empty( $input_args['metaQuery']['metaKey'] ) ) {
+            $query_args['meta_key'] = $input_args['metaQuery']['metaKey'];
             unset( $meta_query['metaKey'] );
         }
         if ( ! empty( $meta_query ) ) {
