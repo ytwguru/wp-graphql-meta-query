@@ -254,6 +254,14 @@ class MetaQuery {
 					'name'  => 'NOT_EXISTS',
 					'value' => 'NOT EXISTS',
 				],
+                'REGEXP'              => [
+                    'name'  => 'REGEXP',
+                    'value' => 'REGEXP',
+                ],
+                'NOT_REGEXP'              => [
+                    'name'  => 'NOT_REGEXP',
+                    'value' => 'NOT REGEXP',
+                ],
 			]
 		] );
 
